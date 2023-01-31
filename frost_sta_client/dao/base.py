@@ -20,9 +20,8 @@ import frost_sta_client.utils
 import logging
 import requests
 import jsonpatch
-import json
 from furl import furl
-
+from urllib.parse import unquote
 
 class BaseDao:
     """
@@ -99,7 +98,7 @@ class BaseDao:
     def create(self, entity):
         url = furl(self.service.url)
         url.path.add(self.entitytype_plural)
-        logging.debug('Posting to ' + str(url.url))
+        logging.info(f'Posting to {unquote(url.url)}')
         json_dict = frost_sta_client.utils.transform_entity_to_json_dict(entity)
         try:
             response = self.service.execute('post', url, json=json_dict)
@@ -124,7 +123,7 @@ class BaseDao:
         if entity.id is None or entity.id == '':
             raise AttributeError('please provide an entity with a valid id')
         url.path.add(self.entity_path(entity.id))
-        logging.debug(f'Patching to {url.url}')
+        logging.info(f'Patching to {unquote(url.url)}')
         headers = self.APPLICATION_JSON_PATCH
         if patches is None:
             raise ValueError('please provide a list of patches, either as a jsonpatch object or a '
@@ -151,7 +150,7 @@ class BaseDao:
         if entity.id is None or entity.id == '':
             raise AttributeError('please provide an entity with a valid id')
         url.path.add(self.entity_path(entity.id))
-        logging.debug('Updating to {}'.format(url.url))
+        logging.info(f'Updating to {unquote(url.url)}')
         json_dict = frost_sta_client.utils.transform_entity_to_json_dict(entity)
         try:
             response = self.service.execute('put', url, json=json_dict)
@@ -167,7 +166,7 @@ class BaseDao:
     def find(self, id):
         url = furl(self.service.url)
         url.path.add(self.entity_path(id))
-        logging.debug('Fetching: {}'.format(url.url))
+        logging.info(f'Fetching: {unquote(url.url)}')
         try:
             response = self.service.execute('get', url)
         except requests.exceptions.HTTPError as e:
@@ -187,7 +186,7 @@ class BaseDao:
     def delete(self, entity):
         url = furl(self.service.url)
         url.path.add(self.entity_path(entity.id))
-        logging.debug('Deleting: {}'.format(url.url))
+        logging.info(f'Deleting: {unquote(url.url)}')
         try:
             response = self.service.execute('delete', url)
         except requests.exceptions.HTTPError as e:

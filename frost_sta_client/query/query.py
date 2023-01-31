@@ -17,10 +17,10 @@
 import frost_sta_client.utils
 import frost_sta_client.model.ext.entity_list
 
-
 import logging
 import requests
 from requests.exceptions import JSONDecodeError
+from urllib.parse import unquote
 
 
 class Query:
@@ -144,6 +144,7 @@ class Query:
         url = self.service.get_full_path(self.parent, self.entitytype_plural)
         url.args = self.params
         try:
+            logging.info(f'Executing GET: {unquote(url.url)}')
             response = self.service.execute('get', url)
         except requests.exceptions.HTTPError as e:
             error_json = e.response.json()
