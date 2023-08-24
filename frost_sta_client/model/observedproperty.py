@@ -158,12 +158,8 @@ class ObservedProperty(entity.Entity):
             self.multi_datastreams.set_service(service)
 
     def __eq__(self, other):
-        if other is None:
+        if not super().__eq__(other):
             return False
-        if not isinstance(other, type(self)):
-            return False
-        if id(self) == id(other):
-            return True
         if self.name != other.name:
             return False
         if self.description != other.description:
@@ -198,7 +194,7 @@ class ObservedProperty(entity.Entity):
         self.name = state.get("name", None)
         self.description = state.get("description", None)
         self.definition = state.get("definition", None)
-        self.properties = state.get("properties", None)
+        self.properties = state.get("properties", {})
         if state.get("Datastreams", None) is not None and isinstance(state["Datastreams"], list):
             entity_class = entity_type.EntityTypes['Datastream']['class']
             self.datastreams = utils.transform_json_to_entity_list(state['Datastreams'], entity_class)

@@ -225,12 +225,8 @@ class Thing(entity.Entity):
             self.tasking_capabilities.set_service(service)
 
     def __eq__(self, other):
-        if other is None:
+        if not super().__eq__(other):
             return False
-        if not isinstance(other, type(self)):
-            return False
-        if id(self) == id(other):
-            return True
         if self.name != other.name:
             return False
         if self.description != other.description:
@@ -266,7 +262,7 @@ class Thing(entity.Entity):
         super().__setstate__(state)
         self.name = state.get("name", None)
         self.description = state.get("description", None)
-        self.properties = state.get("properties", None)
+        self.properties = state.get("properties", {})
 
         if state.get("Locations", None) is not None and isinstance(state["Locations"], list):
             entity_class = entity_type.EntityTypes['Location']['class']

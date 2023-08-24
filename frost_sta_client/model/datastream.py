@@ -257,12 +257,8 @@ class Datastream(entity.Entity):
             self.observations.set_service(service)
 
     def __eq__(self, other):
-        if other is None:
+        if not super().__eq__(other):
             return False
-        if not isinstance(other, type(self)):
-            return False
-        if id(self) == id(other):
-            return True
         if self.name != other.name:
             return False
         if self.description != other.description:
@@ -313,7 +309,7 @@ class Datastream(entity.Entity):
         self.name = state.get("name", None)
         self.description = state.get("description", None)
         self.observation_type = state.get("observationType", None)
-        self.properties = state.get("properties", None)
+        self.properties = state.get("properties", {})
         if state.get("unitOfMeasurement", None) is not None:
             self.unit_of_measurement = frost_sta_client.model.ext.unitofmeasurement.UnitOfMeasurement()
             self.unit_of_measurement.__setstate__(state["unitOfMeasurement"])

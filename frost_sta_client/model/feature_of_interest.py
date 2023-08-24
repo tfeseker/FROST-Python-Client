@@ -149,12 +149,8 @@ class FeatureOfInterest(entity.Entity):
             self.observations.set_service(service)
 
     def __eq__(self, other):
-        if other is None:
+        if not super().__eq__(other):
             return False
-        if not isinstance(other, type(self)):
-            return False
-        if id(self) == id(other):
-            return True
         if self.name != other.name:
             return False
         if self.properties != other.properties:
@@ -190,7 +186,7 @@ class FeatureOfInterest(entity.Entity):
         super().__setstate__(state)
         self.name = state.get("name", None)
         self.description = state.get("description", None)
-        self.properties = state.get("properties", None)
+        self.properties = state.get("properties", {})
         self.encoding_type = state.get("encodingType", None)
         self.feature = state.get("feature", None)
         if state.get("Observations", None) is not None and isinstance(state["Observations"], list):

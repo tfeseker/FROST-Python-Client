@@ -187,17 +187,17 @@ class Location(entity.Entity):
             self.historical_locations.set_service(service)
 
     def __eq__(self, other):
-        if other is None:
+        if not super().__eq__(other):
             return False
-        if not isinstance(other, type(self)):
-            return False
-        if id(self) == id(other):
-            return True
         if self.name != other.name:
             return False
         if self.description != other.description:
             return False
         if self.encoding_type != other.encoding_type:
+            return False
+        if self.location != other.location:
+            return False
+        if self.properties != other.properties:
             return False
         return True
 
@@ -227,7 +227,7 @@ class Location(entity.Entity):
         self.name = state.get("name", None)
         self.description = state.get("description", None)
         self.encoding_type = state.get("encodingType", None)
-        self.properties = state.get("properties", None)
+        self.properties = state.get("properties", {})
         if state.get("Things", None) is not None:
             entity_class = entity_type.EntityTypes['Thing']['class']
             self.things = utils.transform_json_to_entity_list(state['Things'], entity_class)
